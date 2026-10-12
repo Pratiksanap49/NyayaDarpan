@@ -5,3 +5,8 @@ export const ROLES = {
   CLERK: "clerk",
   JUDGE: "judge",
 };
+
+export const AUTH_STORAGE_KEYS = {
+  TOKEN: "nyayaDarpanToken",
+  USER: "nyayaDarpanUser",
+};

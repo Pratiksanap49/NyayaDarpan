@@ -1,17 +1,55 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import { ROLES } from "./constants/app.js";
+import { useAuth } from "./context/AuthContext.jsx";
 import ClerkDashboard from "./pages/ClerkDashboard.jsx";
 import JudgeDashboard from "./pages/JudgeDashboard.jsx";
 import Login from "./pages/Login.jsx";
 import StenoDashboard from "./pages/StenoDashboard.jsx";
+import { ROLE_HOME } from "./utils/roleRoutes.js";
 
 function App() {
+  const { user, loading } = useAuth();
+
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/clerk" element={<ClerkDashboard />} />
-      <Route path="/steno" element={<StenoDashboard />} />
-      <Route path="/judge" element={<JudgeDashboard />} />
+      <Route
+        path="/login"
+        element={
+          loading ? (
+            <p>Loading...</p>
+          ) : user ? (
+            <Navigate to={ROLE_HOME[user.role] || "/login"} replace />
+          ) : (
+            <Login />
+          )
+        }
+      />
+      <Route
+        path="/clerk"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.CLERK]}>
+            <ClerkDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/steno"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.STENOGRAPHER]}>
+            <StenoDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/judge"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.JUDGE]}>
+            <JudgeDashboard />
+          </ProtectedRoute>
+        }
+      />
       <Route path="*" element={<p>Page not found</p>} />
     </Routes>
   );
