@@ -42,4 +42,8 @@ const login = async (req, res) => {
   }
 };
 
-export { login };
+const getMe = (req, res) => {
+  res.json(req.user);
+};
+
+export { getMe, login };
