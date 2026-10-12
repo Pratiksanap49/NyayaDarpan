@@ -1,8 +1,10 @@
-require("dotenv").config();
+import dotenv from "dotenv";
+import cors from "cors";
+import express from "express";
+import connectDB from "./config/db.js";
+import authRoutes from "./routes/auth.js";
 
-const cors = require("cors");
-const express = require("express");
-const connectDB = require("./config/db");
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,6 +19,8 @@ app.use(
 app.get("/api/health", (req, res) => {
   res.json({ ok: true });
 });
+
+app.use("/api/auth", authRoutes);
 
 connectDB().then(() => {
   app.listen(PORT, () => {
