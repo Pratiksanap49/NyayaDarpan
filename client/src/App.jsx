@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import { ROLES } from "./constants/app.js";
-import { useAuth } from "./context/AuthContext.jsx";
+import { useAuth } from "./features/auth/useAuth.js";
 import ClerkDashboard from "./pages/ClerkDashboard.jsx";
 import JudgeDashboard from "./pages/JudgeDashboard.jsx";
 import Login from "./pages/Login.jsx";

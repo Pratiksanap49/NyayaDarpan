@@ -1,4 +1,5 @@
-export const APP_NAME = "NyayaDarpan";
+export const APP_NAME_PARTS = ["Nyaya", "Darpan"];
+export const APP_NAME = APP_NAME_PARTS.join("");
 
 export const ROLES = {
   STENOGRAPHER: "stenographer",
