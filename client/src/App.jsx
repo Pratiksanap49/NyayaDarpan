@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import AppLayout from "./components/layout/AppLayout.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import { ROLES } from "./constants/app.js";
 import { useAuth } from "./features/auth/useAuth.js";
@@ -27,29 +28,39 @@ function App() {
         }
       />
       <Route
-        path="/clerk"
         element={
-          <ProtectedRoute allowedRoles={[ROLES.CLERK]}>
-            <ClerkDashboard />
+          <ProtectedRoute
+            allowedRoles={[ROLES.CLERK, ROLES.STENOGRAPHER, ROLES.JUDGE]}
+          >
+            <AppLayout />
           </ProtectedRoute>
         }
-      />
-      <Route
-        path="/steno"
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.STENOGRAPHER]}>
-            <StenoDashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/judge"
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.JUDGE]}>
-            <JudgeDashboard />
-          </ProtectedRoute>
-        }
-      />
+      >
+        <Route
+          path="clerk"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.CLERK]}>
+              <ClerkDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="steno"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.STENOGRAPHER]}>
+              <StenoDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="judge"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.JUDGE]}>
+              <JudgeDashboard />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
       <Route path="*" element={<p>Page not found</p>} />
     </Routes>
   );

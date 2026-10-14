@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { APP_NAME, APP_NAME_PARTS, ROLES } from "../constants/app.js";
+import { APP_NAME, ROLES } from "../constants/app.js";
+import Logo from "../components/common/Logo.jsx";
 import {
   Alert,
   Button,
@@ -26,21 +27,6 @@ const roleDetails = {
     placeholder: "Enter your official Stenographer ID",
   },
 };
-
-function ScalesIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="mb-3 h-[76px] w-[76px] stroke-brand-navy [stroke-linecap:round] [stroke-linejoin:round] [stroke-width:2.5]"
-      viewBox="0 0 72 72"
-      fill="none"
-    >
-      <path d="M36 10v48M24 58h24M17 23h38M36 10v-3" />
-      <path d="m17 23-10 18h20L17 23ZM55 23 45 41h20L55 23Z" />
-      <path d="M10 41c3 3 11 3 14 0M48 41c3 3 11 3 14 0" />
-    </svg>
-  );
-}
 
 function PeopleIcon() {
   return (
@@ -153,19 +139,7 @@ function Login() {
         aria-label={`${APP_NAME} branding`}
       >
         <div className="z-1 -mt-8 flex flex-col items-center text-center max-[520px]:-mt-4">
-          <ScalesIcon />
-          <h1 className="m-0 text-[clamp(3rem,4.2vw,4.1rem)] font-extrabold leading-none tracking-[-0.08em] max-[520px]:text-5xl">
-            <span>{APP_NAME_PARTS[0]}</span>
-            <strong className="font-extrabold text-brand-blue">
-              {APP_NAME_PARTS[1]}
-            </strong>
-          </h1>
-          <p className="my-5 text-[1.1rem] font-semibold leading-[1.42] max-[520px]:mt-3 max-[520px]:text-[0.95rem]">
-            AI-Powered Judicial
-            <br />
-            Case Intelligence Platform
-          </p>
-          <span className="h-1.5 w-[152px] rounded-full bg-brand-blue shadow-[0_2px_8px_rgb(37_139_212_/_20%)]" />
+          <Logo size="lg" subtitle />
         </div>
         <div className="pointer-events-none absolute -left-[17%] top-[2%] h-[38%] w-[62%] rotate-[-14deg] rounded-full border-[18px] border-brand-decoration/[28%]" />
         <div className="pointer-events-none absolute -bottom-[12%] -right-[15%] h-[34%] w-[42%] rounded-full border-[24px] border-brand-decoration/[28%]" />
