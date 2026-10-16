@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.js";
+import hearingRoutes from "./routes/hearings.js";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/hearings", hearingRoutes);
 
 connectDB().then(() => {
   app.listen(PORT, () => {
