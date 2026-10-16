@@ -16,10 +16,39 @@ const caseIsInUserCourt = (caseRecord, user) =>
 
 const hasInvalidObjectId = (id) => !mongoose.isValidObjectId(id);
 
+// Normalize date input to the server's local start of day.
+const toLocalStartOfDay = (value) => {
+  if (value === "" || value === null || value === undefined) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const dateOnlyMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+    if (dateOnlyMatch) {
+      return new Date(
+        Number(dateOnlyMatch[1]),
+        Number(dateOnlyMatch[2]) - 1,
+        Number(dateOnlyMatch[3]),
+      );
+    }
+  }
+
+  const date = value instanceof Date ? value : new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+};
+
 const applyEditableFields = (rojnama, body) => {
   for (const field of editableFields) {
     if (body[field] !== undefined) {
-      rojnama[field] = body[field];
+      rojnama[field] = ["hearingDate", "nextHearingDate"].includes(field)
+        ? toLocalStartOfDay(body[field])
+        : body[field];
     }
   }
 };

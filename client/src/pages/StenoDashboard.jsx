@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Alert from "../components/ui/Alert.jsx";
 import Button from "../components/ui/Button.jsx";
 import Card from "../components/ui/Card.jsx";
@@ -7,12 +8,27 @@ import ScheduleTable from "../components/dashboard/ScheduleTable.jsx";
 import StatCard from "../components/dashboard/StatCard.jsx";
 import { fetchSchedule, fetchStats } from "../features/hearings/hearingSlice.js";
 import { useAuth } from "../features/auth/useAuth.js";
+import { createDraft } from "../features/rojnama/rojnamaSlice.js";
+
+const getLocalDateInputValue = () => {
+  const date = new Date();
+
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0"),
+  ].join("-");
+};
 
 function StenoDashboard() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { schedule, stats, status, error } = useSelector(
     (state) => state.hearings,
+  );
+  const { status: rojnamaStatus, error: rojnamaError } = useSelector(
+    (state) => state.rojnama,
   );
 
   useEffect(() => {
@@ -21,6 +37,21 @@ function StenoDashboard() {
   }, [dispatch]);
 
   const isLoading = status === "loading" || status === "idle";
+  const isCreating = rojnamaStatus === "loading";
+
+  // Create a draft from a hearing and open its form.
+  const handleCreateRojnama = async (hearing) => {
+    const result = await dispatch(
+      createDraft({
+        caseId: hearing.case.id,
+        hearingDate: getLocalDateInputValue(),
+      }),
+    );
+
+    if (createDraft.fulfilled.match(result)) {
+      navigate(`/steno/rojnama/${result.payload._id}`);
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -34,6 +65,7 @@ function StenoDashboard() {
       </header>
 
       {error ? <Alert variant="error">{error}</Alert> : null}
+      {rojnamaError ? <Alert variant="error">{rojnamaError}</Alert> : null}
 
       <section
         className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
@@ -65,12 +97,14 @@ function StenoDashboard() {
         <Card className="overflow-hidden">
           <ScheduleTable
             hearings={schedule}
-            renderActions={() => (
+            renderActions={(hearing) => (
               <Button
                 variant="outline"
                 size="md"
-                disabled
-                title="Coming soon"
+                disabled={isCreating}
+                loading={isCreating}
+                loadingText="Creating..."
+                onClick={() => handleCreateRojnama(hearing)}
               >
                 Create Rojnama
               </Button>
