@@ -4,6 +4,7 @@ import express from "express";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.js";
 import hearingRoutes from "./routes/hearings.js";
+import rojnamaRoutes from "./routes/rojnamas.js";
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/hearings", hearingRoutes);
+app.use("/api/rojnamas", rojnamaRoutes);
 
 connectDB().then(() => {
   app.listen(PORT, () => {
