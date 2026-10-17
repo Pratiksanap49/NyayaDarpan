@@ -27,30 +27,34 @@ function JudgeDashboard() {
   const isLoading = status === "loading" || status === "idle";
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       <header>
-        <p className="text-sm font-semibold text-[var(--color-accent)]">
-          Judge dashboard
-        </p>
-        <h1 className="mt-1 text-2xl font-bold text-brand-navy md:text-3xl">
-          Welcome, {user?.name || "Judge"}
+        <h1 className="text-3xl font-bold text-brand-navy">
+          Good Morning, {user?.name || "Judge"}
         </h1>
+        <p className="mt-1 text-sm text-brand-muted">
+          Today&apos;s Hearings <span className="mx-1">•</span>{" "}
+          {new Intl.DateTimeFormat("en-IN", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          }).format(new Date())}
+        </p>
       </header>
 
       {error ? <Alert variant="error">{error}</Alert> : null}
 
       <section
-        className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
+        className="grid grid-cols-1 gap-3 sm:grid-cols-3"
         aria-label="Today's statistics"
       >
-        <StatCard label="Total today" value={stats?.totalToday ?? "-"} />
-        <StatCard label="Completed" value={stats?.completed ?? "-"} />
-        <StatCard label="Upcoming" value={stats?.upcoming ?? "-"} />
-        <StatCard label="Pending cases" value={stats?.pendingCases ?? "-"} />
+        <StatCard dashboard icon="▣" label="Total Cases Today" value={stats?.totalToday ?? "-"} hint="Cases scheduled for hearing" />
+        <StatCard dashboard icon="▤" variant="orange" label="Pending Cases" value={stats?.pendingCases ?? "-"} hint="Cases awaiting proceedings" />
+        <StatCard dashboard icon="●" variant="green" label="Completed Cases" value={stats?.completed ?? "-"} hint="Hearings completed today" />
       </section>
 
       <section aria-labelledby="hearings-heading">
-        <div className="mb-4 flex items-center justify-between gap-4">
+        <div className="mb-2 flex items-center justify-between gap-4">
           <div>
             <h2
               id="hearings-heading"
@@ -59,22 +63,24 @@ function JudgeDashboard() {
               Today&apos;s Hearings
             </h2>
             <p className="mt-1 text-sm text-brand-muted">
-              Hearings assigned to you
+              Review today&apos;s scheduled hearings
             </p>
           </div>
           {isLoading ? (
             <p className="text-sm text-brand-muted">Loading...</p>
           ) : null}
         </div>
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden rounded-lg">
           <ScheduleTable
             hearings={schedule}
+            displayMode="judge"
             renderActions={() => (
               <Button
                 variant="outline"
                 size="md"
                 disabled
                 title="Coming soon"
+                className="min-h-9 bg-brand-blue text-white hover:bg-brand-blue-dark"
               >
                 AI Brief
               </Button>
@@ -82,6 +88,17 @@ function JudgeDashboard() {
           />
         </Card>
       </section>
+      <div className="flex items-start gap-4 rounded-lg border border-[#cfe5fb] bg-[#eaf4ff] p-4">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand-blue text-xl font-bold text-white">
+          i
+        </span>
+        <div>
+          <strong className="text-lg text-brand-navy">Hearing Overview</strong>
+          <p className="mt-1 text-sm text-[#607b9d]">
+            Select View to review the case summary, procedural history, relevant laws and precedents before the hearing.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
