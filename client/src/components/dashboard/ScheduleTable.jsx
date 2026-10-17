@@ -19,7 +19,7 @@ function ScheduleTable({ hearings = [], renderActions, compact = false }) {
 
   return (
     <div className="w-full overflow-x-auto">
-      <table className={`w-full min-w-[640px] text-left ${compact ? "text-[0.58rem]" : "text-sm"}`}>
+      <table className={`w-full min-w-[640px] text-left ${compact ? "text-xs" : "text-sm"}`}>
         <thead className="border-b border-brand-border text-xs uppercase tracking-wide text-brand-muted">
           <tr>
             <th className={`${compact ? "px-2 py-2" : "px-5 py-3"} font-bold`}>Time</th>
@@ -47,7 +47,7 @@ function ScheduleTable({ hearings = [], renderActions, compact = false }) {
               </td>
               <td className={`${compact ? "px-2 py-2" : "px-5 py-4"} whitespace-nowrap`}>
                 <span
-                  className={`inline-flex rounded-full px-2 py-0.5 text-[0.55rem] font-bold ${statusStyles[hearing.status] || "bg-slate-100 text-slate-700"}`}
+                  className={`inline-flex rounded-full px-2 py-0.5 text-xs font-bold ${statusStyles[hearing.status] || "bg-slate-100 text-slate-700"}`}
                 >
                   {hearing.status}
                 </span>

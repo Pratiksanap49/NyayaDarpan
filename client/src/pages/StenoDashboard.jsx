@@ -59,7 +59,7 @@ function StenoDashboard() {
         <h1 className="text-xl font-bold text-brand-navy">
           Good Morning, {user?.name || "Stenographer"}
         </h1>
-        <p className="mt-1 text-[0.65rem] text-brand-muted">
+        <p className="mt-1 text-xs text-brand-muted">
           Overview of today&apos;s court proceedings <span className="mx-1">•</span>{" "}
           {new Intl.DateTimeFormat("en-IN", { day: "2-digit", month: "long", year: "numeric" }).format(new Date())}
         </p>
@@ -86,7 +86,7 @@ function StenoDashboard() {
             >
               Today&apos;s Schedule
             </h2>
-            <p className="mt-0.5 text-[0.58rem] text-brand-muted">
+            <p className="mt-0.5 text-xs text-brand-muted">
               Select a hearing to view or update Rojnama
             </p>
           </div>
@@ -106,7 +106,7 @@ function StenoDashboard() {
                   disabled={isCreating}
                   loading={isCreating}
                   loadingText="Creating..."
-                  className="min-h-5 rounded px-2 text-[0.55rem]"
+                  className="min-h-9 rounded px-3 text-xs"
                   onClick={() => handleCreateRojnama(hearing)}
                 >
                   Create Rojnama
@@ -117,7 +117,7 @@ function StenoDashboard() {
                   onClick={() =>
                     navigate(`/steno/cases/${hearing.case.id}/rojnamas`)
                   }
-                  className="min-h-5 rounded px-2 text-[0.55rem]"
+                  className="min-h-9 rounded px-3 text-xs"
                 >
                   Records
                 </Button>

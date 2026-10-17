@@ -72,11 +72,11 @@ function Navbar({ onMenuClick, count }) {
   };
 
   return (
-    <header className="flex h-11 shrink-0 items-center justify-between border-b border-[#e1eaf4] bg-white px-5 shadow-[0_2px_7px_rgb(28_71_112_/_5%)] md:px-5">
+    <header className="flex h-16 shrink-0 items-center justify-between border-b border-[#e1eaf4] bg-white px-5 shadow-[0_2px_7px_rgb(28_71_112_/_5%)] md:px-6">
       <div className="flex items-center gap-4">
         <button
           type="button"
-          className="rounded-md p-2 text-brand-navy hover:bg-brand-sky md:hidden"
+          className="grid h-10 w-10 place-items-center rounded-md text-brand-navy hover:bg-brand-sky md:hidden"
           onClick={onMenuClick}
           aria-label="Open navigation menu"
         >
@@ -84,10 +84,10 @@ function Navbar({ onMenuClick, count }) {
         </button>
         <Logo size="sm" subtitle />
       </div>
-      <div className="flex items-center gap-3 text-brand-navy">
+      <div className="flex items-center gap-4 text-brand-navy">
         <button
           type="button"
-          className="relative rounded-full p-1.5 text-brand-muted hover:bg-brand-sky"
+          className="relative grid h-10 w-10 place-items-center rounded-full text-brand-muted hover:bg-brand-sky"
           aria-label="Notifications"
         >
           <BellIcon />
@@ -95,15 +95,15 @@ function Navbar({ onMenuClick, count }) {
             <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500" />
           )}
         </button>
-        <span className="h-6 w-px bg-slate-200" />
+        <span className="h-8 w-px bg-slate-200" />
         <div className="hidden text-right leading-tight sm:block">
-          <strong className="block text-[0.58rem]">Court Staff</strong>
-          <span className="text-[0.45rem] text-brand-muted">{COURT_NAME}</span>
+          <strong className="block text-sm">Court Staff</strong>
+          <span className="text-xs text-brand-muted">{COURT_NAME}</span>
         </div>
         <div className="relative" ref={menuRef}>
           <button
             type="button"
-            className="flex items-center gap-1.5 rounded-md px-1.5 py-1.5 text-[0.58rem] font-bold hover:bg-brand-sky"
+            className="flex min-h-10 items-center gap-2 rounded-md px-2 text-sm font-bold hover:bg-brand-sky"
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
           >

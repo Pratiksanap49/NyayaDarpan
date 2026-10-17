@@ -4,9 +4,9 @@ import { APP_NAME_PARTS } from "../../constants/app.js";
 function Logo({ size = "md", subtitle = false }) {
   const sizes = {
     sm: {
-      icon: "h-7 w-7",
-      name: "text-base",
-      subtitle: "text-[0.36rem]",
+      icon: "h-9 w-9",
+      name: "text-xl",
+      subtitle: "text-xs",
     },
     md: {
       icon: "h-11 w-11",

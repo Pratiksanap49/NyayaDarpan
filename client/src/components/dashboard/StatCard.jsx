@@ -10,13 +10,13 @@ function StatCard({ label, value, hint, variant = "blue", className = "" }) {
 
   return (
     <Card className={`rounded-lg shadow-[0_3px_12px_rgb(33_79_120_/_4%)] ${variants[variant] || variants.blue} p-3 ${className}`}>
-      <p className="text-[0.62rem] font-bold uppercase tracking-wide text-brand-muted">
+      <p className="text-xs font-bold uppercase tracking-wide text-brand-muted">
         {label}
       </p>
       <p className="mt-1 text-2xl font-bold text-current">
         {value}
       </p>
-      {hint ? <p className="mt-0.5 text-[0.55rem] text-brand-muted">{hint}</p> : null}
+      {hint ? <p className="mt-0.5 text-xs text-brand-muted">{hint}</p> : null}
     </Card>
   );
 }
