@@ -54,49 +54,50 @@ function StenoDashboard() {
   };
 
   return (
-    <div className="space-y-8">
-      <header>
-        <p className="text-sm font-semibold text-[var(--color-accent)]">
-          Stenographer dashboard
-        </p>
-        <h1 className="mt-1 text-2xl font-bold text-brand-navy md:text-3xl">
-          Welcome, {user?.name || "Stenographer"}
+    <div className="space-y-3">
+      <header className="mb-1">
+        <h1 className="text-xl font-bold text-brand-navy">
+          Good Morning, {user?.name || "Stenographer"}
         </h1>
+        <p className="mt-1 text-[0.65rem] text-brand-muted">
+          Overview of today&apos;s court proceedings <span className="mx-1">•</span>{" "}
+          {new Intl.DateTimeFormat("en-IN", { day: "2-digit", month: "long", year: "numeric" }).format(new Date())}
+        </p>
       </header>
 
       {error ? <Alert variant="error">{error}</Alert> : null}
       {rojnamaError ? <Alert variant="error">{rojnamaError}</Alert> : null}
 
       <section
-        className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
+        className="grid grid-cols-1 gap-2 sm:grid-cols-3"
         aria-label="Today's statistics"
       >
-        <StatCard label="Total today" value={stats?.totalToday ?? "-"} />
-        <StatCard label="Completed" value={stats?.completed ?? "-"} />
-        <StatCard label="Upcoming" value={stats?.upcoming ?? "-"} />
-        <StatCard label="Pending cases" value={stats?.pendingCases ?? "-"} />
+        <StatCard variant="blue" label="Total cases today" value={stats?.totalToday ?? "-"} hint="Cases scheduled for hearing" />
+        <StatCard variant="orange" label="Pending Rojnama entries" value={stats?.pendingCases ?? "-"} hint="Hearing records need to be typed/updated" />
+        <StatCard variant="green" label="Completed Rojnama entries" value={stats?.completed ?? "-"} hint="Rojnamas submitted to Clerk" />
       </section>
 
       <section aria-labelledby="schedule-heading">
-        <div className="mb-4 flex items-center justify-between gap-4">
+        <div className="mb-2 flex items-center justify-between gap-4">
           <div>
             <h2
               id="schedule-heading"
-              className="text-xl font-bold text-brand-navy"
+              className="text-sm font-bold text-brand-navy"
             >
               Today&apos;s Schedule
             </h2>
-            <p className="mt-1 text-sm text-brand-muted">
-              Hearings assigned to your court
+            <p className="mt-0.5 text-[0.58rem] text-brand-muted">
+              Select a hearing to view or update Rojnama
             </p>
           </div>
           {isLoading ? (
             <p className="text-sm text-brand-muted">Loading...</p>
           ) : null}
         </div>
-        <Card className="overflow-hidden">
+        <Card className="rounded-lg shadow-[0_3px_12px_rgb(33_79_120_/_4%)] overflow-hidden p-2">
           <ScheduleTable
             hearings={schedule}
+            compact
             renderActions={(hearing) => (
               <div className="flex flex-wrap gap-1">
                 <Button
@@ -105,6 +106,7 @@ function StenoDashboard() {
                   disabled={isCreating}
                   loading={isCreating}
                   loadingText="Creating..."
+                  className="min-h-5 rounded px-2 text-[0.55rem]"
                   onClick={() => handleCreateRojnama(hearing)}
                 >
                   Create Rojnama
@@ -115,6 +117,7 @@ function StenoDashboard() {
                   onClick={() =>
                     navigate(`/steno/cases/${hearing.case.id}/rojnamas`)
                   }
+                  className="min-h-5 rounded px-2 text-[0.55rem]"
                 >
                   Records
                 </Button>

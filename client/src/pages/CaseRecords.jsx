@@ -10,6 +10,7 @@ const statusStyles = {
   draft: "bg-slate-100 text-slate-700",
   needs_correction: "bg-amber-100 text-amber-800",
   submitted: "bg-blue-100 text-blue-800",
+  resubmitted: "bg-cyan-100 text-cyan-800",
   approved: "bg-green-100 text-green-800",
 };
 

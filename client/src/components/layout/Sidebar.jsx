@@ -54,7 +54,7 @@ function Sidebar({ open, onClose }) {
         <div
           key={item.path}
           title="Coming soon"
-          className="flex cursor-not-allowed items-center gap-3 rounded-md px-4 py-3 text-sm text-slate-400"
+          className="flex cursor-not-allowed items-center gap-2 rounded-md px-2 py-2 text-[0.58rem] text-slate-400"
         >
           <Icon name={item.icon} />
           {item.label}
@@ -68,7 +68,7 @@ function Sidebar({ open, onClose }) {
         to={item.path}
         onClick={onClose}
         className={({ isActive }) =>
-          `relative flex items-center gap-3 rounded-md px-4 py-3 text-sm font-semibold transition ${
+          `relative flex items-center gap-2 rounded-md px-2 py-2 text-[0.58rem] font-semibold transition ${
             isActive
               ? "bg-brand-sky text-accent"
               : "text-brand-muted hover:bg-slate-50 hover:text-brand-navy"
@@ -99,33 +99,33 @@ function Sidebar({ open, onClose }) {
         />
       )}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-64 -translate-x-full flex-col border-r border-slate-100 bg-white px-4 py-6 transition-transform md:static md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-28 -translate-x-full flex-col border-r border-[#e0eaf5] bg-white px-1.5 py-3 transition-transform md:static md:translate-x-0 ${
           open ? "translate-x-0" : ""
         }`}
       >
-        <nav className="space-y-2">{items.map(renderItem)}</nav>
-        <div className="mt-auto space-y-2 border-t border-slate-100 pt-5">
+        <nav className="space-y-1.5">{items.map(renderItem)}</nav>
+          <div className="mt-auto space-y-1.5 border-t border-slate-100 pt-2.5">
           <div
             title="Coming soon"
-            className="flex cursor-not-allowed items-center gap-3 rounded-md px-4 py-3 text-sm text-slate-400"
+            className="flex cursor-not-allowed items-center gap-2 rounded-md px-2 py-2 text-[0.58rem] text-slate-400"
           >
             <Icon name="settings" />
             Settings
           </div>
-          <div className="flex items-center gap-3 rounded-lg bg-brand-light px-3 py-3">
-            <span className="grid h-9 w-9 place-items-center rounded-full bg-brand-sky text-accent">
+          <div className="flex items-center gap-1.5 rounded-lg bg-brand-light px-1.5 py-1.5">
+            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-sky text-accent">
               <Icon name="user" />
             </span>
             <div className="min-w-0">
-              <strong className="block text-xs text-brand-navy">Court Staff</strong>
-              <span className="block truncate text-[0.68rem] text-brand-muted">
+              <strong className="block text-[0.52rem] text-brand-navy">Court Staff</strong>
+              <span className="block truncate text-[0.45rem] text-brand-muted">
                 {roleLabel}
               </span>
             </div>
           </div>
           <button
             type="button"
-            className="flex w-full items-center gap-3 rounded-md px-4 py-3 text-sm font-semibold text-brand-error hover:bg-brand-error-bg"
+            className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-[0.58rem] font-semibold text-brand-error hover:bg-brand-error-bg"
             onClick={handleLogout}
           >
             <Icon name="logout" />
