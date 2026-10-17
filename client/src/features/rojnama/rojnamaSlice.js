@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { logout } from "../auth/authSlice.js";
 import {
   createRojnama as createRojnamaRequest,
+  getCaseRecords,
   getRojnama,
   submitRojnama as submitRojnamaRequest,
   updateRojnama,
@@ -66,10 +67,28 @@ export const submitRojnama = createAsyncThunk(
   },
 );
 
+// Load the Rojnama records visible for one case.
+export const fetchCaseRecords = createAsyncThunk(
+  "rojnama/fetchCaseRecords",
+  async (caseId, { rejectWithValue }) => {
+    try {
+      return await getCaseRecords(caseId);
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to load case Rojnama records."),
+      );
+    }
+  },
+);
+
 const initialState = {
   current: null,
   status: "idle",
   error: null,
+  records: [],
+  recordsCase: null,
+  recordsStatus: "idle",
+  recordsError: null,
 };
 
 const rojnamaSlice = createSlice({
@@ -125,6 +144,20 @@ const rojnamaSlice = createSlice({
       .addCase(submitRojnama.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || "Unable to submit the Rojnama.";
+      })
+      .addCase(fetchCaseRecords.pending, (state) => {
+        state.recordsStatus = "loading";
+        state.recordsError = null;
+      })
+      .addCase(fetchCaseRecords.fulfilled, (state, action) => {
+        state.records = action.payload.rojnamas;
+        state.recordsCase = action.payload.case;
+        state.recordsStatus = "succeeded";
+      })
+      .addCase(fetchCaseRecords.rejected, (state, action) => {
+        state.recordsStatus = "failed";
+        state.recordsError =
+          action.payload || "Unable to load case Rojnama records.";
       })
       .addCase(logout, () => initialState);
   },

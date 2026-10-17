@@ -7,6 +7,7 @@ import ClerkDashboard from "./pages/ClerkDashboard.jsx";
 import JudgeDashboard from "./pages/JudgeDashboard.jsx";
 import Login from "./pages/Login.jsx";
 import RojnamaForm from "./pages/RojnamaForm.jsx";
+import CaseRecords from "./pages/CaseRecords.jsx";
 import StenoDashboard from "./pages/StenoDashboard.jsx";
 import { ROLE_HOME } from "./utils/roleRoutes.js";
 
@@ -58,6 +59,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={[ROLES.STENOGRAPHER]}>
               <RojnamaForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="steno/cases/:caseId/rojnamas"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.STENOGRAPHER]}>
+              <CaseRecords />
             </ProtectedRoute>
           }
         />

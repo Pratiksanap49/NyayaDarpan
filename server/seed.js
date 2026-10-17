@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import connectDB from "./config/db.js";
 import Case from "./models/Case.js";
 import Hearing from "./models/Hearing.js";
+import Rojnama from "./models/Rojnama.js";
 import User from "./models/User.js";
 
 dotenv.config();
@@ -29,6 +30,7 @@ const seed = async () => {
     await connectDB();
     // Clear dependent data first so every seed run recreates exactly the sample set.
     await Hearing.deleteMany({});
+    await Rojnama.deleteMany({});
     await Case.deleteMany({});
     await User.deleteMany({});
 

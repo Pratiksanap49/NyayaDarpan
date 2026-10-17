@@ -2,6 +2,7 @@ import express from "express";
 import {
   createRojnama,
   getRojnama,
+  listCaseRojnamas,
   submitRojnama,
   updateRojnama,
 } from "../controllers/rojnamaController.js";
@@ -16,6 +17,12 @@ router.patch(
   protect,
   authorize("stenographer"),
   submitRojnama,
+);
+router.get(
+  "/case/:caseId",
+  protect,
+  authorize("stenographer", "clerk", "judge"),
+  listCaseRojnamas,
 );
 router.get(
   "/:id",

@@ -14,6 +14,19 @@ const editableFields = [
 const caseIsInUserCourt = (caseRecord, user) =>
   caseRecord && caseRecord.court === user.courtId;
 
+// Return the Rojnama filter allowed for the authenticated user's role.
+const getRecordsVisibility = (user) => {
+  if (user.role === "stenographer") {
+    return { createdBy: user._id };
+  }
+
+  if (user.role === "clerk") {
+    return { status: { $ne: "draft" } };
+  }
+
+  return { status: "approved" };
+};
+
 const hasInvalidObjectId = (id) => !mongoose.isValidObjectId(id);
 
 // Normalize date input to the server's local start of day.
@@ -221,4 +234,65 @@ const getRojnama = async (req, res) => {
   }
 };
 
-export { createRojnama, getRojnama, submitRojnama, updateRojnama };
+// Return the visible Rojnama records for a case in the user's court.
+const listCaseRojnamas = async (req, res) => {
+  try {
+    const { caseId } = req.params;
+
+    if (hasInvalidObjectId(caseId)) {
+      return res.status(400).json({ message: "Invalid case id" });
+    }
+
+    const caseRecord = await Case.findById(caseId).select(
+      "_id caseNumber title caseType court",
+    );
+
+    if (!caseIsInUserCourt(caseRecord, req.user)) {
+      return res.status(404).json({ message: "Case not found" });
+    }
+
+    const records = await Rojnama.find({
+      caseId,
+      ...getRecordsVisibility(req.user),
+    })
+      .select("_id hearingDate purpose status nextHearingDate updatedAt")
+      .sort({ hearingDate: -1, updatedAt: -1 })
+      .lean();
+
+    return res.json({
+      case: {
+        id: caseRecord._id,
+        caseNumber: caseRecord.caseNumber,
+        title: caseRecord.title,
+        caseType: caseRecord.caseType,
+      },
+      rojnamas: records.map(
+        ({
+          _id,
+          hearingDate,
+          purpose,
+          status,
+          nextHearingDate,
+          updatedAt,
+        }) => ({
+          id: _id,
+          hearingDate,
+          purpose,
+          status,
+          nextHearingDate,
+          updatedAt,
+        }),
+      ),
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to load case Rojnamas" });
+  }
+};
+
+export {
+  createRojnama,
+  getRojnama,
+  listCaseRojnamas,
+  submitRojnama,
+  updateRojnama,
+};

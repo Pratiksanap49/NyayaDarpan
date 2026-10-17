@@ -98,16 +98,27 @@ function StenoDashboard() {
           <ScheduleTable
             hearings={schedule}
             renderActions={(hearing) => (
-              <Button
-                variant="outline"
-                size="md"
-                disabled={isCreating}
-                loading={isCreating}
-                loadingText="Creating..."
-                onClick={() => handleCreateRojnama(hearing)}
-              >
-                Create Rojnama
-              </Button>
+              <div className="flex flex-wrap gap-1">
+                <Button
+                  variant="outline"
+                  size="md"
+                  disabled={isCreating}
+                  loading={isCreating}
+                  loadingText="Creating..."
+                  onClick={() => handleCreateRojnama(hearing)}
+                >
+                  Create Rojnama
+                </Button>
+                <Button
+                  variant="outline"
+                  size="md"
+                  onClick={() =>
+                    navigate(`/steno/cases/${hearing.case.id}/rojnamas`)
+                  }
+                >
+                  Records
+                </Button>
+              </div>
             )}
           />
         </Card>

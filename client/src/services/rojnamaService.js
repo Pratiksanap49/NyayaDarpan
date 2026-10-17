@@ -20,4 +20,15 @@ const getRojnama = async (id) => {
   return response.data;
 };
 
-export { createRojnama, getRojnama, submitRojnama, updateRojnama };
+const getCaseRecords = async (caseId) => {
+  const response = await api.get(`/rojnamas/case/${caseId}`);
+  return response.data;
+};
+
+export {
+  createRojnama,
+  getCaseRecords,
+  getRojnama,
+  submitRojnama,
+  updateRojnama,
+};
