@@ -30,6 +30,16 @@ const getPendingRojnamas = async () => {
   return response.data;
 };
 
+const getNeedsCorrection = async () => {
+  const response = await api.get("/rojnamas/needs-correction");
+  return response.data;
+};
+
+const resubmitRojnama = async (id) => {
+  const response = await api.patch(`/rojnamas/${id}/resubmit`);
+  return response.data;
+};
+
 const sendRemark = async (id, text) => {
   const response = await api.patch(`/rojnamas/${id}/remarks`, { text });
   return response.data;
@@ -45,8 +55,10 @@ export {
   createRojnama,
   getCaseRecords,
   getPendingRojnamas,
+  getNeedsCorrection,
   getRojnama,
   sendRemark,
+  resubmitRojnama,
   submitRojnama,
   updateRojnama,
 };

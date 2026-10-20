@@ -4,8 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Alert from "../components/ui/Alert.jsx";
 import Button from "../components/ui/Button.jsx";
 import Card from "../components/ui/Card.jsx";
-import Input from "../components/ui/Input.jsx";
-import Textarea from "../components/ui/Textarea.jsx";
+import RojnamaFields from "../components/rojnama/RojnamaFields.jsx";
 import {
   fetchRojnama,
   saveDraft,
@@ -14,13 +13,10 @@ import {
 
 const editableStatuses = ["draft", "needs_correction"];
 
-const emptyForm = {
-  hearingDate: "",
-  purpose: "",
-  business: "",
-  orderDirections: "",
-  nextHearingDate: "",
-};
+import {
+  emptyRojnamaForm,
+  toDateInputValue,
+} from "../utils/rojnamaForm.js";
 
 const formReducer = (state, action) => {
   if (action.type === "hydrate") {
@@ -34,31 +30,13 @@ const formReducer = (state, action) => {
   return state;
 };
 
-const toDateInputValue = (value) => {
-  if (!value) {
-    return "";
-  }
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return "";
-  }
-
-  return [
-    date.getFullYear(),
-    String(date.getMonth() + 1).padStart(2, "0"),
-    String(date.getDate()).padStart(2, "0"),
-  ].join("-");
-};
-
 // Render the stenographer's editable or read-only Rojnama form.
 function RojnamaForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { current, status, error } = useSelector((state) => state.rojnama);
-  const [form, dispatchForm] = useReducer(formReducer, emptyForm);
+  const [form, dispatchForm] = useReducer(formReducer, emptyRojnamaForm);
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
@@ -173,46 +151,9 @@ function RojnamaForm() {
           </Alert>
         ) : null}
 
-        <div className="mt-6 grid gap-5">
-          <Input
-            label="Hearing date"
-            id="hearingDate"
-            name="hearingDate"
-            type="date"
-            value={form.hearingDate}
-            onChange={handleChange}
-            readOnly={!isEditable}
-          />
-          <Input
-            label="Purpose"
-            id="purpose"
-            name="purpose"
-            value={form.purpose}
-            onChange={handleChange}
-            readOnly={!isEditable}
-          />
-          <Textarea
-            label="Business"
-            id="business"
-            name="business"
-            value={form.business}
-            onChange={handleChange}
-            readOnly={!isEditable}
-          />
-          <Textarea
-            label="Order directions"
-            id="orderDirections"
-            name="orderDirections"
-            value={form.orderDirections}
-            onChange={handleChange}
-            readOnly={!isEditable}
-          />
-          <Input
-            label="Next hearing date"
-            id="nextHearingDate"
-            name="nextHearingDate"
-            type="date"
-            value={form.nextHearingDate}
+        <div className="mt-6">
+          <RojnamaFields
+            form={form}
             onChange={handleChange}
             readOnly={!isEditable}
           />

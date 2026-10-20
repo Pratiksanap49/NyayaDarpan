@@ -14,6 +14,7 @@ import {
 const statusStyles = {
   draft: "bg-slate-100 text-slate-700",
   submitted: "bg-blue-100 text-blue-800",
+  resubmitted: "bg-cyan-100 text-cyan-800",
   needs_correction: "bg-amber-100 text-amber-800",
   approved: "bg-green-100 text-green-800",
 };
@@ -41,6 +42,7 @@ const formatDateTime = (value) => {
 
 const readOnlyNote = {
   needs_correction: "Waiting for the stenographer to correct this Rojnama.",
+  resubmitted: "Resubmitted and waiting for clerk review.",
   approved: "Approved and added to the case records.",
   draft: "This Rojnama is still a draft.",
 };
@@ -62,7 +64,7 @@ function ClerkRojnamaReview() {
 
   const isLoading = status === "loading" || status === "idle";
   const isSubmitting = actionStatus === "loading";
-  const isSubmitted = current?.status === "submitted";
+  const isSubmitted = ["submitted", "resubmitted"].includes(current?.status);
 
   const returnToPending = (message) => {
     setSuccessMessage(message);
@@ -215,8 +217,43 @@ function ClerkRojnamaReview() {
             {readOnlyNote[current.status] || "This Rojnama is read-only."}
           </Alert>
         )}
+        <PreviousVersions revisions={current.revisions} />
       </Card>
     </div>
+  );
+}
+
+function PreviousVersions({ revisions = [] }) {
+  return (
+    <section className="mt-6 border-t border-brand-border pt-6">
+      <h2 className="text-lg font-bold text-brand-navy">Previous versions</h2>
+      {revisions.length === 0 ? (
+        <p className="mt-3 text-sm text-brand-muted">No previous versions</p>
+      ) : (
+        <div className="mt-3 space-y-3">
+          {[...revisions].reverse().map((revision) => (
+            <div
+              key={revision.version}
+              className="rounded-md border border-brand-border bg-slate-50 p-3"
+            >
+              <p className="text-sm font-semibold text-brand-navy">
+                Version {revision.version}
+              </p>
+              <p className="mt-1 text-sm text-brand-gray">
+                Returned remark: {revision.returnedRemark}
+              </p>
+              <p className="mt-1 text-xs text-brand-muted">
+                Saved {formatDateTime(revision.savedAt)}
+              </p>
+              <p className="mt-2 whitespace-pre-wrap text-sm text-brand-gray">
+                {revision.purpose || "-"} • {revision.business || "-"} •{" "}
+                {revision.orderDirections || "-"}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 

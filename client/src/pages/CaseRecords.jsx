@@ -112,10 +112,18 @@ function CaseRecords() {
                             variant="outline"
                             size="md"
                             onClick={() =>
-                              navigate(`/steno/rojnama/${record.id}`)
+                              navigate(
+                                record.status === "needs_correction"
+                                  ? `/steno/corrections/${record.id}`
+                                  : `/steno/rojnama/${record.id}`,
+                              )
                             }
                           >
-                            {canEdit ? "Edit" : "View"}
+                            {record.status === "needs_correction"
+                              ? "Correct"
+                              : canEdit
+                                ? "Edit"
+                                : "View"}
                           </Button>
                         </td>
                       </tr>

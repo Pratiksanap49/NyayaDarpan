@@ -21,9 +21,9 @@ export const NAV_CONFIG = {
     { label: "Dashboard", path: "/steno", icon: "dashboard", ready: true },
     {
       label: "Clerk Remarks",
-      path: "/steno/remarks",
+      path: "/steno/corrections",
       icon: "remarks",
-      ready: false,
+      ready: true,
     },
   ],
   [ROLES.JUDGE]: [

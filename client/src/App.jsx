@@ -11,6 +11,8 @@ import Login from "./pages/Login.jsx";
 import RojnamaForm from "./pages/RojnamaForm.jsx";
 import CaseRecords from "./pages/CaseRecords.jsx";
 import StenoDashboard from "./pages/StenoDashboard.jsx";
+import StenoCorrections from "./pages/StenoCorrections.jsx";
+import StenoCorrectionPage from "./pages/StenoCorrectionPage.jsx";
 import { ROLE_HOME } from "./utils/roleRoutes.js";
 
 function App() {
@@ -69,6 +71,22 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={[ROLES.STENOGRAPHER]}>
               <StenoDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="steno/corrections"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.STENOGRAPHER]}>
+              <StenoCorrections />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="steno/corrections/:id"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.STENOGRAPHER]}>
+              <StenoCorrectionPage />
             </ProtectedRoute>
           }
         />

@@ -8,6 +8,7 @@ import { fetchPendingRojnamas } from "../features/rojnama/rojnamaSlice.js";
 
 const statusStyles = {
   submitted: "bg-blue-100 text-blue-800",
+  resubmitted: "bg-cyan-100 text-cyan-800",
   needs_correction: "bg-amber-100 text-amber-800",
   approved: "bg-green-100 text-green-800",
 };

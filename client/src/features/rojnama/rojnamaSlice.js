@@ -4,8 +4,10 @@ import {
   createRojnama as createRojnamaRequest,
   approveRojnama as approveRojnamaRequest,
   getCaseRecords,
+  getNeedsCorrection,
   getPendingRojnamas,
   getRojnama,
+  resubmitRojnama as resubmitRojnamaRequest,
   sendRemark as sendRemarkRequest,
   submitRojnama as submitRojnamaRequest,
   updateRojnama,
@@ -98,6 +100,32 @@ export const fetchPendingRojnamas = createAsyncThunk(
   },
 );
 
+export const fetchNeedsCorrection = createAsyncThunk(
+  "rojnama/fetchNeedsCorrection",
+  async (_, { rejectWithValue }) => {
+    try {
+      return await getNeedsCorrection();
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to load Rojnamas needing correction."),
+      );
+    }
+  },
+);
+
+export const resubmitRojnama = createAsyncThunk(
+  "rojnama/resubmitRojnama",
+  async (id, { rejectWithValue }) => {
+    try {
+      return await resubmitRojnamaRequest(id);
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to resubmit the Rojnama."),
+      );
+    }
+  },
+);
+
 // Send a clerk correction remark for a submitted Rojnama.
 export const sendRemark = createAsyncThunk(
   "rojnama/sendRemark",
@@ -139,6 +167,9 @@ const initialState = {
   pendingError: null,
   actionStatus: "idle",
   actionError: null,
+  needsCorrection: [],
+  needsCorrectionStatus: "idle",
+  needsCorrectionError: null,
 };
 
 const rojnamaSlice = createSlice({
@@ -221,6 +252,31 @@ const rojnamaSlice = createSlice({
         state.pendingStatus = "failed";
         state.pendingError =
           action.payload || "Unable to load pending Rojnamas.";
+      })
+      .addCase(fetchNeedsCorrection.pending, (state) => {
+        state.needsCorrectionStatus = "loading";
+        state.needsCorrectionError = null;
+      })
+      .addCase(fetchNeedsCorrection.fulfilled, (state, action) => {
+        state.needsCorrection = action.payload;
+        state.needsCorrectionStatus = "succeeded";
+      })
+      .addCase(fetchNeedsCorrection.rejected, (state, action) => {
+        state.needsCorrectionStatus = "failed";
+        state.needsCorrectionError =
+          action.payload || "Unable to load Rojnamas needing correction.";
+      })
+      .addCase(resubmitRojnama.pending, (state) => {
+        state.actionStatus = "loading";
+        state.actionError = null;
+      })
+      .addCase(resubmitRojnama.fulfilled, (state, action) => {
+        state.current = action.payload;
+        state.actionStatus = "succeeded";
+      })
+      .addCase(resubmitRojnama.rejected, (state, action) => {
+        state.actionStatus = "failed";
+        state.actionError = action.payload || "Unable to resubmit the Rojnama.";
       })
       .addCase(sendRemark.pending, (state) => {
         state.actionStatus = "loading";
