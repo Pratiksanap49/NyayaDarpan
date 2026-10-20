@@ -3,6 +3,7 @@ import { logout } from "../auth/authSlice.js";
 import {
   createRojnama as createRojnamaRequest,
   getCaseRecords,
+  getPendingRojnamas,
   getRojnama,
   submitRojnama as submitRojnamaRequest,
   updateRojnama,
@@ -81,6 +82,20 @@ export const fetchCaseRecords = createAsyncThunk(
   },
 );
 
+// Load submitted Rojnamas waiting for clerk review.
+export const fetchPendingRojnamas = createAsyncThunk(
+  "rojnama/fetchPendingRojnamas",
+  async (_, { rejectWithValue }) => {
+    try {
+      return await getPendingRojnamas();
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to load pending Rojnamas."),
+      );
+    }
+  },
+);
+
 const initialState = {
   current: null,
   status: "idle",
@@ -89,6 +104,9 @@ const initialState = {
   recordsCase: null,
   recordsStatus: "idle",
   recordsError: null,
+  pending: [],
+  pendingStatus: "idle",
+  pendingError: null,
 };
 
 const rojnamaSlice = createSlice({
@@ -158,6 +176,19 @@ const rojnamaSlice = createSlice({
         state.recordsStatus = "failed";
         state.recordsError =
           action.payload || "Unable to load case Rojnama records.";
+      })
+      .addCase(fetchPendingRojnamas.pending, (state) => {
+        state.pendingStatus = "loading";
+        state.pendingError = null;
+      })
+      .addCase(fetchPendingRojnamas.fulfilled, (state, action) => {
+        state.pending = action.payload;
+        state.pendingStatus = "succeeded";
+      })
+      .addCase(fetchPendingRojnamas.rejected, (state, action) => {
+        state.pendingStatus = "failed";
+        state.pendingError =
+          action.payload || "Unable to load pending Rojnamas.";
       })
       .addCase(logout, () => initialState);
   },

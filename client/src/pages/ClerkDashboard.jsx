@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import ScheduleTable from "../components/dashboard/ScheduleTable.jsx";
 import StatCard from "../components/dashboard/StatCard.jsx";
 import Alert from "../components/ui/Alert.jsx";
@@ -10,27 +11,76 @@ import {
   fetchSchedule,
   fetchStats,
 } from "../features/hearings/hearingSlice.js";
+import { fetchPendingRojnamas } from "../features/rojnama/rojnamaSlice.js";
+
+const dateKey = (value) => {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return [
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  ].join("-");
+};
+
+const formatDate = (value) => {
+  if (!value) {
+    return "-";
+  }
+
+  return new Intl.DateTimeFormat("en-IN", {
+    dateStyle: "medium",
+  }).format(new Date(value));
+};
 
 function ClerkDashboard() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { schedule, stats, status, error } = useSelector(
     (state) => state.hearings,
+  );
+  const { pending, pendingStatus, pendingError } = useSelector(
+    (state) => state.rojnama,
   );
 
   // Load the clerk's scoped schedule and statistics when the page mounts.
   useEffect(() => {
     dispatch(fetchSchedule());
     dispatch(fetchStats());
+    dispatch(fetchPendingRojnamas());
   }, [dispatch]);
 
   const isLoading = status === "loading" || status === "idle";
+  const pendingByHearing = new Map(
+    pending
+      .filter((rojnama) => dateKey(rojnama.hearingDate) === dateKey(new Date()))
+      .map((rojnama) => [
+        `${rojnama.caseId?._id}-${dateKey(rojnama.hearingDate)}`,
+        rojnama,
+      ]),
+  );
+  const scheduleWithRojnamas = schedule.map((hearing) => {
+    const rojnama = pendingByHearing.get(
+      `${hearing.case.id}-${dateKey(new Date())}`,
+    );
+
+    return {
+      ...hearing,
+      rojnamaId: rojnama?._id,
+      rojnamaStatus: rojnama?.status,
+    };
+  });
 
   return (
     <div className="space-y-5">
       <header>
         <h1 className="text-3xl font-bold text-brand-navy">
-          Good Morning, {user?.name || "Clerk"}
+          Good Morning, {user?.name || "-"}
         </h1>
         <p className="mt-1 text-sm text-brand-muted">
           Overview of today&apos;s court proceedings <span className="mx-1">•</span>{" "}
@@ -73,41 +123,84 @@ function ClerkDashboard() {
         </div>
         <Card className="overflow-hidden rounded-lg">
           <ScheduleTable
-            hearings={schedule}
+            hearings={scheduleWithRojnamas}
             displayMode="clerk"
-            renderActions={() => (
+            renderActions={(hearing) => (
               <div className="flex max-w-full flex-wrap gap-1">
-                {["View", "Edit"].map((label) => (
-                  <Button
-                    key={label}
+                <Button
+                  variant="outline"
+                  size="md"
+                  disabled={!hearing.rojnamaId}
+                  title={
+                    hearing.rojnamaId
+                      ? "View pending Rojnama"
+                      : "No pending Rojnama for this hearing"
+                  }
+                  className="min-h-9 px-3 text-xs"
+                  onClick={() =>
+                    navigate(`/clerk/rojnama/${hearing.rojnamaId}`)
+                  }
+                >
+                  View
+                </Button>
+                <Button
                     variant="outline"
                     size="md"
                     disabled
-                    title="Coming soon"
+                    title="Clerk editing is not available"
                     className="min-h-9 px-3 text-xs"
                   >
-                    {label}
-                  </Button>
-                ))}
+                  Edit
+                </Button>
               </div>
             )}
           />
         </Card>
       </section>
       <Card className="p-5">
-        <h2 className="text-lg font-bold text-brand-navy">Pending Clerk Actions</h2>
-        <div className="mt-3 flex max-w-xl items-center gap-4 rounded-lg border border-[#f5d6d8] bg-[#fff8f8] p-4 text-brand-error">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#ffe2e5] text-lg">
-            ▤
-          </span>
-          <div>
-            <p className="text-2xl font-bold">{stats?.pendingCases ?? "-"}</p>
-            <strong className="block text-sm">Rojnama records need updating</strong>
-            <span className="text-xs text-brand-muted">
-              Hearing records from stenographers are pending entry or update
-            </span>
-          </div>
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-lg font-bold text-brand-navy">
+            Pending Clerk Actions
+          </h2>
+          <Link
+            to="/clerk/pending"
+            className="text-sm font-semibold text-[var(--color-accent)] hover:underline"
+          >
+            View all
+          </Link>
         </div>
+        {pendingError ? (
+          <div className="mt-3">
+            <Alert variant="error">{pendingError}</Alert>
+          </div>
+        ) : pendingStatus === "loading" || pendingStatus === "idle" ? (
+          <p className="mt-3 text-sm text-brand-muted">Loading pending Rojnamas...</p>
+        ) : pending.length === 0 ? (
+          <p className="mt-3 text-sm text-brand-muted">No pending Rojnamas</p>
+        ) : (
+          <div className="mt-3 divide-y divide-brand-border">
+            {pending.map((rojnama) => (
+              <button
+                key={rojnama._id}
+                type="button"
+                className="flex min-h-16 w-full items-center justify-between gap-4 py-3 text-left hover:bg-slate-50"
+                onClick={() => navigate(`/clerk/rojnama/${rojnama._id}`)}
+              >
+                <span className="min-w-0">
+                  <strong className="block text-sm text-brand-navy">
+                    {rojnama.caseId?.caseNumber || "-"}
+                  </strong>
+                  <span className="block truncate text-sm text-brand-gray">
+                    {rojnama.caseId?.title || "-"}
+                  </span>
+                </span>
+                <span className="shrink-0 text-xs text-brand-muted">
+                  {formatDate(rojnama.hearingDate)}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
       </Card>
     </div>
   );

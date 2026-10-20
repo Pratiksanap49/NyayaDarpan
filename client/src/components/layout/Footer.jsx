@@ -7,7 +7,9 @@ function Footer() {
   return (
     <footer className="flex min-h-16 shrink-0 flex-wrap items-center justify-between gap-4 border-t border-[#e0eaf5] bg-white px-6 py-3 text-xs text-brand-footer">
       <div className="grid gap-1">
-        <strong className="text-sm text-brand-navy">{APP_NAME} © 2026</strong>
+        <strong className="text-sm text-brand-navy">
+          {APP_NAME} © {new Date().getFullYear()}
+        </strong>
         <span>Judicial Case Intelligence &amp; Support Platform</span>
       </div>
       <span className="hidden text-center sm:block">

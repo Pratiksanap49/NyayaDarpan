@@ -145,7 +145,7 @@ function Login() {
         <div className="pointer-events-none absolute -bottom-[12%] -right-[15%] h-[34%] w-[42%] rounded-full border-[24px] border-brand-decoration/[28%]" />
         <footer className="absolute bottom-6 left-9 grid gap-1 text-[0.58rem] text-brand-footer max-[520px]:left-5">
           <strong className="font-extrabold text-brand-navy">
-            {APP_NAME} © 2026
+            {APP_NAME} © {new Date().getFullYear()}
           </strong>
           <span>Judicial Case Intelligence &amp; Support Platform</span>
         </footer>

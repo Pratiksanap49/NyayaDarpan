@@ -30,7 +30,7 @@ function JudgeDashboard() {
     <div className="space-y-5">
       <header>
         <h1 className="text-3xl font-bold text-brand-navy">
-          Good Morning, {user?.name || "Judge"}
+          Good Morning, {user?.name || "-"}
         </h1>
         <p className="mt-1 text-sm text-brand-muted">
           Today&apos;s Hearings <span className="mx-1">•</span>{" "}

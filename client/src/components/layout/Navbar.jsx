@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { COURT_NAME, ROLE_LABELS } from "../../constants/navigation.js";
+import { ROLE_LABELS } from "../../constants/navigation.js";
 import { useAuth } from "../../features/auth/useAuth.js";
 import Logo from "../common/Logo.jsx";
 
@@ -97,8 +97,10 @@ function Navbar({ onMenuClick, count }) {
         </button>
         <span className="h-8 w-px bg-slate-200" />
         <div className="hidden text-right leading-tight sm:block">
-          <strong className="block text-sm">Court Staff</strong>
-          <span className="text-xs text-brand-muted">{COURT_NAME}</span>
+          <strong className="block text-sm">{user?.name || "-"}</strong>
+          <span className="text-xs text-brand-muted">
+            Court ID: {user?.courtId || "-"}
+          </span>
         </div>
         <div className="relative" ref={menuRef}>
           <button

@@ -25,9 +25,15 @@ const getCaseRecords = async (caseId) => {
   return response.data;
 };
 
+const getPendingRojnamas = async () => {
+  const response = await api.get("/rojnamas/pending");
+  return response.data;
+};
+
 export {
   createRojnama,
   getCaseRecords,
+  getPendingRojnamas,
   getRojnama,
   submitRojnama,
   updateRojnama,

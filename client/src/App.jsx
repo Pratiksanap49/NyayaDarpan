@@ -4,6 +4,8 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import { ROLES } from "./constants/app.js";
 import { useAuth } from "./features/auth/useAuth.js";
 import ClerkDashboard from "./pages/ClerkDashboard.jsx";
+import ClerkPendingRojnamas from "./pages/ClerkPendingRojnamas.jsx";
+import ClerkRojnamaPlaceholder from "./pages/ClerkRojnamaPlaceholder.jsx";
 import JudgeDashboard from "./pages/JudgeDashboard.jsx";
 import Login from "./pages/Login.jsx";
 import RojnamaForm from "./pages/RojnamaForm.jsx";
@@ -43,6 +45,22 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={[ROLES.CLERK]}>
               <ClerkDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="clerk/pending"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.CLERK]}>
+              <ClerkPendingRojnamas />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="clerk/rojnama/:id"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.CLERK]}>
+              <ClerkRojnamaPlaceholder />
             </ProtectedRoute>
           }
         />

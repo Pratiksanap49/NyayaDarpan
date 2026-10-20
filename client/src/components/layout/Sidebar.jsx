@@ -117,7 +117,9 @@ function Sidebar({ open, onClose }) {
               <Icon name="user" />
             </span>
             <div className="min-w-0">
-              <strong className="block text-sm text-brand-navy">Court Staff</strong>
+              <strong className="block truncate text-sm text-brand-navy">
+                {user?.name || "-"}
+              </strong>
               <span className="block truncate text-xs text-brand-muted">
                 {roleLabel}
               </span>

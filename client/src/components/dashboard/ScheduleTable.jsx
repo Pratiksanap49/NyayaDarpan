@@ -5,6 +5,9 @@ const statusStyles = {
   Completed: "bg-green-100 text-green-800",
   Pending: "bg-amber-100 text-amber-800",
   Updated: "bg-green-100 text-green-800",
+  submitted: "bg-blue-100 text-blue-800",
+  needs_correction: "bg-amber-100 text-amber-800",
+  approved: "bg-green-100 text-green-800",
 };
 
 // ScheduleTable renders hearings in a compact, responsive dashboard table.

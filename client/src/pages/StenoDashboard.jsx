@@ -57,7 +57,7 @@ function StenoDashboard() {
     <div className="space-y-3">
       <header className="mb-1">
         <h1 className="text-xl font-bold text-brand-navy">
-          Good Morning, {user?.name || "Stenographer"}
+          Good Morning, {user?.name || "-"}
         </h1>
         <p className="mt-1 text-xs text-brand-muted">
           Overview of today&apos;s court proceedings <span className="mx-1">•</span>{" "}

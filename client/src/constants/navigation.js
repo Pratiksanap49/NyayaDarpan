@@ -6,12 +6,15 @@ export const ROLE_LABELS = {
   [ROLES.JUDGE]: "Judge",
 };
 
-// TODO: Replace this temporary value with the user's court name.
-export const COURT_NAME = "District Court";
-
 export const NAV_CONFIG = {
   [ROLES.CLERK]: [
     { label: "Dashboard", path: "/clerk", icon: "dashboard", ready: true },
+    {
+      label: "Pending Rojnamas",
+      path: "/clerk/pending",
+      icon: "remarks",
+      ready: true,
+    },
     { label: "Cases", path: "/clerk/cases", icon: "cases", ready: false },
   ],
   [ROLES.STENOGRAPHER]: [
