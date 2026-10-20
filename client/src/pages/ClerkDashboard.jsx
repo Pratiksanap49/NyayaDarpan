@@ -12,6 +12,8 @@ import {
   fetchStats,
 } from "../features/hearings/hearingSlice.js";
 import { fetchPendingRojnamas } from "../features/rojnama/rojnamaSlice.js";
+import { getGreeting } from "../utils/greeting.js";
+
 
 const dateKey = (value) => {
   const date = new Date(value);
@@ -80,7 +82,7 @@ function ClerkDashboard() {
     <div className="space-y-5">
       <header>
         <h1 className="text-3xl font-bold text-brand-navy">
-          Good Morning, {user?.name || "-"}
+          {getGreeting()}, {user?.name || "-"}
         </h1>
         <p className="mt-1 text-sm text-brand-muted">
           Overview of today&apos;s court proceedings <span className="mx-1">•</span>{" "}
@@ -144,12 +146,12 @@ function ClerkDashboard() {
                   View
                 </Button>
                 <Button
-                    variant="outline"
-                    size="md"
-                    disabled
-                    title="Clerk editing is not available"
-                    className="min-h-9 px-3 text-xs"
-                  >
+                  variant="outline"
+                  size="md"
+                  disabled
+                  title="Clerk editing is not available"
+                  className="min-h-9 px-3 text-xs"
+                >
                   Edit
                 </Button>
               </div>

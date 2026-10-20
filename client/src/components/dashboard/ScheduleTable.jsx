@@ -86,7 +86,7 @@ function ScheduleTable({
         </thead>
         <tbody className="divide-y divide-brand-border">
           {hearings.map((hearing) => (
-            <tr key={hearing.id} className="align-top">
+            <tr key={hearing.id} className="align-top transition-colors hover:bg-slate-50">
               {isClerk || isJudge ? (
                 <td className={`${compact ? "px-2 py-2" : "px-5 py-4"} text-center text-brand-gray`}>
                   {hearings.indexOf(hearing) + 1}

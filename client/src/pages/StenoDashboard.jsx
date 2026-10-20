@@ -9,6 +9,8 @@ import StatCard from "../components/dashboard/StatCard.jsx";
 import { fetchSchedule, fetchStats } from "../features/hearings/hearingSlice.js";
 import { useAuth } from "../features/auth/useAuth.js";
 import { createDraft } from "../features/rojnama/rojnamaSlice.js";
+import { getGreeting } from "../utils/greeting.js";
+
 
 const getLocalDateInputValue = () => {
   const date = new Date();
@@ -54,12 +56,12 @@ function StenoDashboard() {
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-5">
       <header className="mb-1">
-        <h1 className="text-xl font-bold text-brand-navy">
-          Good Morning, {user?.name || "-"}
+        <h1 className="text-3xl font-bold text-brand-navy">
+          {getGreeting()}, {user?.name || "-"}
         </h1>
-        <p className="mt-1 text-xs text-brand-muted">
+        <p className="mt-1 text-sm text-brand-muted">
           Overview of today&apos;s court proceedings <span className="mx-1">•</span>{" "}
           {new Intl.DateTimeFormat("en-IN", { day: "2-digit", month: "long", year: "numeric" }).format(new Date())}
         </p>
@@ -69,12 +71,12 @@ function StenoDashboard() {
       {rojnamaError ? <Alert variant="error">{rojnamaError}</Alert> : null}
 
       <section
-        className="grid grid-cols-1 gap-2 sm:grid-cols-3"
+        className="grid grid-cols-1 gap-3 sm:grid-cols-3"
         aria-label="Today's statistics"
       >
-        <StatCard variant="blue" label="Total cases today" value={stats?.totalToday ?? "-"} hint="Cases scheduled for hearing" />
-        <StatCard variant="orange" label="Pending Rojnama entries" value={stats?.pendingCases ?? "-"} hint="Hearing records need to be typed/updated" />
-        <StatCard variant="green" label="Completed Rojnama entries" value={stats?.completed ?? "-"} hint="Rojnamas submitted to Clerk" />
+        <StatCard dashboard icon="▣" variant="blue" label="Total cases today" value={stats?.totalToday ?? "-"} hint="Cases scheduled for hearing" />
+        <StatCard dashboard icon="▤" variant="orange" label="Pending Rojnama entries" value={stats?.pendingCases ?? "-"} hint="Hearing records need to be typed/updated" />
+        <StatCard dashboard icon="●" variant="green" label="Completed Rojnama entries" value={stats?.completed ?? "-"} hint="Rojnamas submitted to Clerk" />
       </section>
 
       <section aria-labelledby="schedule-heading">
@@ -82,11 +84,11 @@ function StenoDashboard() {
           <div>
             <h2
               id="schedule-heading"
-              className="text-sm font-bold text-brand-navy"
+              className="text-xl font-bold text-brand-navy"
             >
               Today&apos;s Schedule
             </h2>
-            <p className="mt-0.5 text-xs text-brand-muted">
+            <p className="mt-1 text-sm text-brand-muted">
               Select a hearing to view or update Rojnama
             </p>
           </div>
@@ -94,7 +96,7 @@ function StenoDashboard() {
             <p className="text-sm text-brand-muted">Loading...</p>
           ) : null}
         </div>
-        <Card className="rounded-lg shadow-[0_3px_12px_rgb(33_79_120_/_4%)] overflow-hidden p-2">
+        <Card className="overflow-hidden rounded-lg">
           <ScheduleTable
             hearings={schedule}
             compact

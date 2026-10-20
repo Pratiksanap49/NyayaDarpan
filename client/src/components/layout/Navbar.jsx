@@ -6,7 +6,16 @@ import Logo from "../common/Logo.jsx";
 
 function UserIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-5 w-5">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-5 w-5"
+    >
       <circle cx="12" cy="8" r="3.2" />
       <path d="M5.5 19c.6-3.4 2.7-5.2 6.5-5.2s5.9 1.8 6.5 5.2" />
     </svg>
@@ -15,7 +24,16 @@ function UserIcon() {
 
 function MenuIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-5 w-5">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-5 w-5"
+    >
       <path d="M4 7h16M4 12h16M4 17h16" />
     </svg>
   );
@@ -23,7 +41,16 @@ function MenuIcon() {
 
 function BellIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-5 w-5">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-5 w-5"
+    >
       <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4" />
     </svg>
   );
@@ -31,13 +58,23 @@ function BellIcon() {
 
 function ChevronIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" className="h-4 w-4">
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-4 w-4"
+    >
       <path d="m7 10 5 5 5-5" />
     </svg>
   );
 }
 
-// Navbar accepts an onMenuClick callback and an optional notification count.
+// Navbar accepts an onMenuClick callback (opens drawer on mobile, toggles collapse on desktop)
+// and an optional notification count.
 function Navbar({ onMenuClick, count }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -73,12 +110,14 @@ function Navbar({ onMenuClick, count }) {
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-[#e1eaf4] bg-white px-5 shadow-[0_2px_7px_rgb(28_71_112_/_5%)] md:px-6">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
+        {/* Single toggle button visible on all breakpoints:
+            mobile → opens drawer, desktop → collapses/expands sidebar */}
         <button
           type="button"
-          className="grid h-10 w-10 place-items-center rounded-md text-brand-navy hover:bg-brand-sky md:hidden"
+          className="grid h-10 w-10 place-items-center rounded-md text-brand-navy hover:bg-brand-sky transition-colors"
           onClick={onMenuClick}
-          aria-label="Open navigation menu"
+          aria-label="Toggle navigation menu"
         >
           <MenuIcon />
         </button>
@@ -87,7 +126,7 @@ function Navbar({ onMenuClick, count }) {
       <div className="flex items-center gap-4 text-brand-navy">
         <button
           type="button"
-          className="relative grid h-10 w-10 place-items-center rounded-full text-brand-muted hover:bg-brand-sky"
+          className="relative grid h-10 w-10 place-items-center rounded-full text-brand-muted hover:bg-brand-sky transition-colors"
           aria-label="Notifications"
         >
           <BellIcon />
@@ -105,22 +144,28 @@ function Navbar({ onMenuClick, count }) {
         <div className="relative" ref={menuRef}>
           <button
             type="button"
-            className="flex min-h-10 items-center gap-2 rounded-md px-2 text-sm font-bold hover:bg-brand-sky"
+            className="flex min-h-10 items-center gap-2 rounded-md px-2 text-sm font-bold hover:bg-brand-sky transition-colors"
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
+            aria-haspopup="menu"
           >
             <UserIcon />
             <span className="hidden sm:inline">{roleLabel}</span>
             <ChevronIcon />
           </button>
           {menuOpen && (
-            <div className="absolute right-0 top-full z-30 mt-2 w-48 rounded-lg border border-brand-border bg-white p-2 shadow-lg">
+            <div
+              role="menu"
+              className="absolute right-0 top-full z-30 mt-2 w-48 rounded-lg border border-brand-border bg-white p-2 shadow-lg"
+            >
               <p className="truncate px-3 py-2 text-sm font-semibold text-brand-navy">
                 {user?.name || "User"}
               </p>
+              <div className="my-1 h-px bg-slate-100" />
               <button
                 type="button"
-                className="w-full rounded-md px-3 py-2 text-left text-sm text-brand-error hover:bg-brand-error-bg"
+                role="menuitem"
+                className="w-full rounded-md px-3 py-2 text-left text-sm text-brand-error hover:bg-brand-error-bg transition-colors"
                 onClick={handleLogout}
               >
                 Logout
