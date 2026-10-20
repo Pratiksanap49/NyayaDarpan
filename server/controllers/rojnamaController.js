@@ -67,9 +67,24 @@ const applyEditableFields = (rojnama, body) => {
 };
 
 const invalidImmutableFields = (body) =>
-  ["status", "caseId", "createdBy", "remarks"].filter(
+  ["status", "caseId", "createdBy", "remarks", "revisions"].filter(
     (field) => body[field] !== undefined,
   );
+
+const getMissingRequiredFields = (rojnama) =>
+  [
+    ["hearingDate", rojnama.hearingDate],
+    ["purpose", rojnama.purpose],
+    ["business", rojnama.business],
+    ["orderDirections", rojnama.orderDirections],
+  ]
+    .filter(
+      ([, value]) =>
+        value === undefined ||
+        value === null ||
+        String(value).trim() === "",
+    )
+    .map(([field]) => field);
 
 // Create a draft Rojnama for a case in the stenographer's court.
 const createRojnama = async (req, res) => {
@@ -129,6 +144,12 @@ const updateRojnama = async (req, res) => {
       return res.status(403).json({ message: "Only the creator can edit this Rojnama" });
     }
 
+    const caseRecord = await Case.findById(rojnama.caseId).select("court");
+
+    if (!caseIsInUserCourt(caseRecord, req.user)) {
+      return res.status(403).json({ message: "Rojnama is outside your court" });
+    }
+
     if (!["draft", "needs_correction"].includes(rojnama.status)) {
       return res.status(400).json({
         message: "Only draft or needs_correction Rojnamas can be edited",
@@ -171,15 +192,7 @@ const submitRojnama = async (req, res) => {
       });
     }
 
-    const requiredFields = [
-      ["hearingDate", rojnama.hearingDate],
-      ["purpose", rojnama.purpose],
-      ["business", rojnama.business],
-      ["orderDirections", rojnama.orderDirections],
-    ];
-    const missingFields = requiredFields
-      .filter(([, value]) => value === undefined || value === null || String(value).trim() === "")
-      .map(([field]) => field);
+    const missingFields = getMissingRequiredFields(rojnama);
 
     if (missingFields.length > 0) {
       return res.status(400).json({
@@ -232,6 +245,76 @@ const getRojnama = async (req, res) => {
     return res.json(rojnama);
   } catch (error) {
     return res.status(500).json({ message: "Failed to load Rojnama" });
+  }
+};
+
+// Return the creator's Rojnamas waiting for correction.
+const listNeedsCorrectionRojnamas = async (req, res) => {
+  try {
+    const records = await Rojnama.find({
+      createdBy: req.user._id,
+      status: "needs_correction",
+    })
+      .populate("caseId", "_id caseNumber title")
+      .populate("remarks.author", "_id name")
+      .sort({ updatedAt: -1 })
+      .lean();
+
+    return res.json(records);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Failed to load Rojnamas needing correction" });
+  }
+};
+
+// Resubmit a corrected Rojnama for clerk review.
+const resubmitRojnama = async (req, res) => {
+  try {
+    if (hasInvalidObjectId(req.params.id)) {
+      return res.status(400).json({ message: "Invalid Rojnama id" });
+    }
+
+    const rojnama = await Rojnama.findById(req.params.id);
+
+    if (!rojnama) {
+      return res.status(404).json({ message: "Rojnama not found" });
+    }
+
+    if (!rojnama.createdBy.equals(req.user._id)) {
+      return res.status(403).json({ message: "Only the creator can resubmit this Rojnama" });
+    }
+
+    const caseRecord = await Case.findById(rojnama.caseId).select("court");
+
+    if (!caseIsInUserCourt(caseRecord, req.user)) {
+      return res.status(403).json({ message: "Rojnama is outside your court" });
+    }
+
+    if (rojnama.status !== "needs_correction") {
+      return res.status(400).json({
+        message: "Only needs_correction Rojnamas can be resubmitted",
+      });
+    }
+
+    const missingFields = getMissingRequiredFields(rojnama);
+
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        message: `Missing required fields: ${missingFields.join(", ")}`,
+      });
+    }
+
+    rojnama.status = "resubmitted";
+    await rojnama.save();
+
+    return res.json(rojnama);
+  } catch (error) {
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid Rojnama data" });
+    }
+
+    return res.status(500).json({ message: "Failed to resubmit Rojnama" });
   }
 };
 
@@ -293,7 +376,9 @@ const listCaseRojnamas = async (req, res) => {
 // Return submitted Rojnamas for clerk review, oldest first.
 const listPendingRojnamas = async (req, res) => {
   try {
-    const records = await Rojnama.find({ status: "submitted" })
+    const records = await Rojnama.find({
+      status: { $in: ["submitted", "resubmitted"] },
+    })
       .populate({
         path: "caseId",
         select: "_id caseNumber title",
@@ -327,12 +412,28 @@ const addRemark = async (req, res) => {
       return res.status(404).json({ message: "Rojnama not found" });
     }
 
-    if (rojnama.status !== "submitted") {
+    if (!["submitted", "resubmitted"].includes(rojnama.status)) {
       return res.status(400).json({
-        message: "Remarks can only be added to submitted Rojnamas",
+        message: "Remarks can only be added to submitted or resubmitted Rojnamas",
       });
     }
 
+    const caseRecord = await Case.findById(rojnama.caseId).select("court");
+
+    if (!caseIsInUserCourt(caseRecord, req.user)) {
+      return res.status(403).json({ message: "Rojnama is outside your court" });
+    }
+
+    rojnama.revisions.push({
+      version: rojnama.revisions.length + 1,
+      hearingDate: rojnama.hearingDate,
+      purpose: rojnama.purpose,
+      business: rojnama.business,
+      orderDirections: rojnama.orderDirections,
+      nextHearingDate: rojnama.nextHearingDate,
+      returnedRemark: text,
+      savedAt: new Date(),
+    });
     rojnama.remarks.push({
       text,
       author: req.user._id,
@@ -360,10 +461,16 @@ const approveRojnama = async (req, res) => {
       return res.status(404).json({ message: "Rojnama not found" });
     }
 
-    if (rojnama.status !== "submitted") {
+    if (!["submitted", "resubmitted"].includes(rojnama.status)) {
       return res.status(400).json({
-        message: "Only submitted Rojnamas can be approved",
+        message: "Only submitted or resubmitted Rojnamas can be approved",
       });
+    }
+
+    const caseRecord = await Case.findById(rojnama.caseId).select("court");
+
+    if (!caseIsInUserCourt(caseRecord, req.user)) {
+      return res.status(403).json({ message: "Rojnama is outside your court" });
     }
 
     rojnama.status = "approved";
@@ -382,7 +489,9 @@ export {
   createRojnama,
   getRojnama,
   listPendingRojnamas,
+  listNeedsCorrectionRojnamas,
   listCaseRojnamas,
+  resubmitRojnama,
   submitRojnama,
   updateRojnama,
 };

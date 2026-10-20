@@ -19,6 +19,29 @@ const remarkSchema = new mongoose.Schema(
   { _id: false },
 );
 
+const revisionSchema = new mongoose.Schema(
+  {
+    version: {
+      type: Number,
+      required: true,
+    },
+    hearingDate: Date,
+    purpose: String,
+    business: String,
+    orderDirections: String,
+    nextHearingDate: Date,
+    returnedRemark: {
+      type: String,
+      required: true,
+    },
+    savedAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { _id: false },
+);
+
 const rojnamaSchema = new mongoose.Schema(
   {
     caseId: {
@@ -43,11 +66,21 @@ const rojnamaSchema = new mongoose.Schema(
     },
     status: {
       type: String, // Current review state of the Rojnama.
-      enum: ["draft", "submitted", "needs_correction", "approved"],
+      enum: [
+        "draft",
+        "submitted",
+        "needs_correction",
+        "resubmitted",
+        "approved",
+      ],
       default: "draft",
     },
     remarks: {
       type: [remarkSchema], // Review remarks attached to the Rojnama.
+      default: [],
+    },
+    revisions: {
+      type: [revisionSchema],
       default: [],
     },
     createdBy: {

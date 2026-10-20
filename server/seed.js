@@ -236,6 +236,29 @@ const seed = async () => {
             createdAt: rojnamaDates[2],
           },
         ],
+        revisions: [
+          {
+            version: 1,
+            hearingDate: new Date(
+              today.getFullYear(),
+              today.getMonth(),
+              today.getDate() - 2,
+            ),
+            purpose: "Hearing on the interim maintenance application.",
+            business:
+              "Counsel for both parties completed oral submissions on interim relief.",
+            orderDirections:
+              "Provide a copy of the income affidavit to the opposite party.",
+            nextHearingDate: new Date(
+              today.getFullYear(),
+              today.getMonth(),
+              today.getDate() + 14,
+            ),
+            returnedRemark:
+              "Please record the exhibit numbers for the income affidavits.",
+            savedAt: rojnamaDates[2],
+          },
+        ],
         createdBy: stenographer._id,
         createdAt: rojnamaDates[2],
       },
