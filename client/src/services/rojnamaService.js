@@ -30,11 +30,23 @@ const getPendingRojnamas = async () => {
   return response.data;
 };
 
+const sendRemark = async (id, text) => {
+  const response = await api.patch(`/rojnamas/${id}/remarks`, { text });
+  return response.data;
+};
+
+const approveRojnama = async (id) => {
+  const response = await api.patch(`/rojnamas/${id}/approve`);
+  return response.data;
+};
+
 export {
+  approveRojnama,
   createRojnama,
   getCaseRecords,
   getPendingRojnamas,
   getRojnama,
+  sendRemark,
   submitRojnama,
   updateRojnama,
 };

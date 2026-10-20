@@ -209,6 +209,7 @@ const getRojnama = async (req, res) => {
 
     const rojnama = await Rojnama.findById(req.params.id)
       .populate("caseId", "_id caseNumber title")
+      .populate("remarks.author", "_id name")
       .lean();
 
     if (!rojnama) {

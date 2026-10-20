@@ -5,7 +5,7 @@ import { ROLES } from "./constants/app.js";
 import { useAuth } from "./features/auth/useAuth.js";
 import ClerkDashboard from "./pages/ClerkDashboard.jsx";
 import ClerkPendingRojnamas from "./pages/ClerkPendingRojnamas.jsx";
-import ClerkRojnamaPlaceholder from "./pages/ClerkRojnamaPlaceholder.jsx";
+import ClerkRojnamaReview from "./pages/ClerkRojnamaReview.jsx";
 import JudgeDashboard from "./pages/JudgeDashboard.jsx";
 import Login from "./pages/Login.jsx";
 import RojnamaForm from "./pages/RojnamaForm.jsx";
@@ -60,7 +60,7 @@ function App() {
           path="clerk/rojnama/:id"
           element={
             <ProtectedRoute allowedRoles={[ROLES.CLERK]}>
-              <ClerkRojnamaPlaceholder />
+              <ClerkRojnamaReview />
             </ProtectedRoute>
           }
         />

@@ -2,9 +2,11 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { logout } from "../auth/authSlice.js";
 import {
   createRojnama as createRojnamaRequest,
+  approveRojnama as approveRojnamaRequest,
   getCaseRecords,
   getPendingRojnamas,
   getRojnama,
+  sendRemark as sendRemarkRequest,
   submitRojnama as submitRojnamaRequest,
   updateRojnama,
 } from "../../services/rojnamaService.js";
@@ -96,6 +98,34 @@ export const fetchPendingRojnamas = createAsyncThunk(
   },
 );
 
+// Send a clerk correction remark for a submitted Rojnama.
+export const sendRemark = createAsyncThunk(
+  "rojnama/sendRemark",
+  async ({ id, text }, { rejectWithValue }) => {
+    try {
+      return await sendRemarkRequest(id, text);
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to send the remark."),
+      );
+    }
+  },
+);
+
+// Approve a submitted Rojnama and add it to the case records.
+export const approveRojnama = createAsyncThunk(
+  "rojnama/approveRojnama",
+  async (id, { rejectWithValue }) => {
+    try {
+      return await approveRojnamaRequest(id);
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to approve the Rojnama."),
+      );
+    }
+  },
+);
+
 const initialState = {
   current: null,
   status: "idle",
@@ -107,6 +137,8 @@ const initialState = {
   pending: [],
   pendingStatus: "idle",
   pendingError: null,
+  actionStatus: "idle",
+  actionError: null,
 };
 
 const rojnamaSlice = createSlice({
@@ -189,6 +221,30 @@ const rojnamaSlice = createSlice({
         state.pendingStatus = "failed";
         state.pendingError =
           action.payload || "Unable to load pending Rojnamas.";
+      })
+      .addCase(sendRemark.pending, (state) => {
+        state.actionStatus = "loading";
+        state.actionError = null;
+      })
+      .addCase(sendRemark.fulfilled, (state, action) => {
+        state.current = action.payload;
+        state.actionStatus = "succeeded";
+      })
+      .addCase(sendRemark.rejected, (state, action) => {
+        state.actionStatus = "failed";
+        state.actionError = action.payload || "Unable to send the remark.";
+      })
+      .addCase(approveRojnama.pending, (state) => {
+        state.actionStatus = "loading";
+        state.actionError = null;
+      })
+      .addCase(approveRojnama.fulfilled, (state, action) => {
+        state.current = action.payload;
+        state.actionStatus = "succeeded";
+      })
+      .addCase(approveRojnama.rejected, (state, action) => {
+        state.actionStatus = "failed";
+        state.actionError = action.payload || "Unable to approve the Rojnama.";
       })
       .addCase(logout, () => initialState);
   },
