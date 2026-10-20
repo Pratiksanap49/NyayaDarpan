@@ -1,7 +1,10 @@
 import express from "express";
 import {
+  addRemark,
+  approveRojnama,
   createRojnama,
   getRojnama,
+  listPendingRojnamas,
   listCaseRojnamas,
   submitRojnama,
   updateRojnama,
@@ -18,6 +21,9 @@ router.patch(
   authorize("stenographer"),
   submitRojnama,
 );
+router.get("/pending", protect, authorize("clerk"), listPendingRojnamas);
+router.patch("/:id/remarks", protect, authorize("clerk"), addRemark);
+router.patch("/:id/approve", protect, authorize("clerk"), approveRojnama);
 router.get(
   "/case/:caseId",
   protect,

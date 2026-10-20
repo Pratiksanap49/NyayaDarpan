@@ -59,6 +59,8 @@ const seed = async () => {
     ]);
 
     const judge = users.find(({ role }) => role === "judge");
+    const clerk = users.find(({ role }) => role === "clerk");
+    const stenographer = users.find(({ role }) => role === "stenographer");
     const cases = await Case.create([
       {
         caseNumber: "CS/101/2026",
@@ -190,6 +192,67 @@ const seed = async () => {
       },
     ]);
 
+    const rojnamaDates = [
+      new Date(today.getFullYear(), today.getMonth(), today.getDate() - 4),
+      new Date(today.getFullYear(), today.getMonth(), today.getDate() - 3),
+      new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2),
+      new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1),
+    ];
+    await Rojnama.create([
+      {
+        caseId: pendingCases[0]._id,
+        hearingDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 4),
+        purpose: "Evidence recording and examination of the plaintiff witness.",
+        business: "Plaintiff witness was present and affidavit was taken on record.",
+        orderDirections: "List the matter for cross-examination of the plaintiff witness.",
+        nextHearingDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7),
+        status: "submitted",
+        createdBy: stenographer._id,
+        createdAt: rojnamaDates[0],
+      },
+      {
+        caseId: pendingCases[1]._id,
+        hearingDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 3),
+        purpose: "Consideration of the charge-sheet and submissions of both sides.",
+        business: "The prosecutor and defence counsel addressed the court on the charge-sheet.",
+        orderDirections: "Defence counsel shall file written submissions before the next date.",
+        nextHearingDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 10),
+        status: "submitted",
+        createdBy: stenographer._id,
+        createdAt: rojnamaDates[1],
+      },
+      {
+        caseId: pendingCases[2]._id,
+        hearingDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2),
+        purpose: "Hearing on the interim maintenance application.",
+        business: "Counsel for both parties completed oral submissions on interim relief.",
+        orderDirections: "Provide a copy of the income affidavit to the opposite party.",
+        nextHearingDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 14),
+        status: "needs_correction",
+        remarks: [
+          {
+            text: "Please record the exhibit numbers for the income affidavits.",
+            author: clerk._id,
+            createdAt: rojnamaDates[2],
+          },
+        ],
+        createdBy: stenographer._id,
+        createdAt: rojnamaDates[2],
+      },
+      {
+        caseId: pendingCases[3]._id,
+        hearingDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1),
+        purpose: "Hearing on the petition challenging the demolition notice.",
+        business: "The municipal corporation produced the demolition inspection report.",
+        orderDirections: "The respondent shall file a reply with supporting records.",
+        nextHearingDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 21),
+        status: "approved",
+        createdBy: stenographer._id,
+        approvedBy: clerk._id,
+        createdAt: rojnamaDates[3],
+      },
+    ]);
+
     const caseById = new Map(
       cases.map((caseRecord) => [caseRecord._id.toString(), caseRecord]),
     );
@@ -197,6 +260,7 @@ const seed = async () => {
       users: users.length,
       cases: cases.length,
       hearings: hearings.length,
+      rojnamas: 4,
       roleIds: {
         clerk: DEV_CLERK_ROLE_ID,
         judge: DEV_JUDGE_ROLE_ID,

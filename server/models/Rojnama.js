@@ -6,7 +6,7 @@ const remarkSchema = new mongoose.Schema(
       type: String, // Text recorded as a remark on the Rojnama.
       required: true,
     },
-    by: {
+    author: {
       type: mongoose.Schema.Types.ObjectId, // User who added the remark.
       ref: "User",
       required: true,

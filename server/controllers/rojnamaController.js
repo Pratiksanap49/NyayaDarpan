@@ -289,9 +289,98 @@ const listCaseRojnamas = async (req, res) => {
   }
 };
 
+// Return submitted Rojnamas for clerk review, oldest first.
+const listPendingRojnamas = async (req, res) => {
+  try {
+    const records = await Rojnama.find({ status: "submitted" })
+      .populate({
+        path: "caseId",
+        select: "_id caseNumber title",
+        match: { court: req.user.courtId },
+      })
+      .sort({ createdAt: 1 })
+      .lean();
+
+    return res.json(records.filter((record) => record.caseId));
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to load pending Rojnamas" });
+  }
+};
+
+// Add a clerk's correction remark to a submitted Rojnama.
+const addRemark = async (req, res) => {
+  try {
+    if (hasInvalidObjectId(req.params.id)) {
+      return res.status(400).json({ message: "Invalid Rojnama id" });
+    }
+
+    const text = typeof req.body.text === "string" ? req.body.text.trim() : "";
+
+    if (!text) {
+      return res.status(400).json({ message: "Remark text is required" });
+    }
+
+    const rojnama = await Rojnama.findById(req.params.id);
+
+    if (!rojnama) {
+      return res.status(404).json({ message: "Rojnama not found" });
+    }
+
+    if (rojnama.status !== "submitted") {
+      return res.status(400).json({
+        message: "Remarks can only be added to submitted Rojnamas",
+      });
+    }
+
+    rojnama.remarks.push({
+      text,
+      author: req.user._id,
+      createdAt: new Date(),
+    });
+    rojnama.status = "needs_correction";
+    await rojnama.save();
+
+    return res.json(rojnama);
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to add Rojnama remark" });
+  }
+};
+
+// Approve a submitted Rojnama as a clerk.
+const approveRojnama = async (req, res) => {
+  try {
+    if (hasInvalidObjectId(req.params.id)) {
+      return res.status(400).json({ message: "Invalid Rojnama id" });
+    }
+
+    const rojnama = await Rojnama.findById(req.params.id);
+
+    if (!rojnama) {
+      return res.status(404).json({ message: "Rojnama not found" });
+    }
+
+    if (rojnama.status !== "submitted") {
+      return res.status(400).json({
+        message: "Only submitted Rojnamas can be approved",
+      });
+    }
+
+    rojnama.status = "approved";
+    rojnama.approvedBy = req.user._id;
+    await rojnama.save();
+
+    return res.json(rojnama);
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to approve Rojnama" });
+  }
+};
+
 export {
+  addRemark,
+  approveRojnama,
   createRojnama,
   getRojnama,
+  listPendingRojnamas,
   listCaseRojnamas,
   submitRojnama,
   updateRojnama,
